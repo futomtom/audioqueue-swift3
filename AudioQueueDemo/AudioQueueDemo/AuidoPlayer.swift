@@ -41,7 +41,7 @@ class AudioPlayer: NSObject {
     let streamPacketsProc: AudioFileStream_PacketsProc = { (clientData, numberBytes, numberPackets, inputData, packetDescriptions) -> Void in
 
         let selfPointee: AudioPlayer = unsafeBitCast(clientData, to: AudioPlayer.self)
-        print("numberBytes = \(numberBytes),numberPackets = \(numberPackets)")
+  //      print("numberBytes = \(numberBytes),numberPackets = \(numberPackets)")
         var buffer: AudioQueueBufferRef? = nil
         if let audioQueue = selfPointee.audioQueue {
             AudioQueueAllocateBuffer(audioQueue, numberBytes, &buffer)
@@ -50,7 +50,7 @@ class AudioPlayer: NSObject {
             AudioQueueEnqueueBuffer(audioQueue, buffer!, numberPackets, packetDescriptions)
             AudioQueuePrime(audioQueue, 5, nil)
             AudioQueueStart (audioQueue, nil)
-            selfPointee.isRunning = 1
+            //selfPointee.isRunning = 1
         }
     }
 
@@ -61,7 +61,6 @@ class AudioPlayer: NSObject {
             var size: UInt32 = UInt32(MemoryLayout<UInt32>.size)
             AudioQueueGetProperty(audioQueueRef, propertyID, &isRunning, &size)
             selfPointee.isRunning = isRunning
-            print("c\(isRunning)")
         }
     }
 
@@ -85,7 +84,7 @@ class AudioPlayer: NSObject {
         AudioFileStreamOpen(selfPointee, streamPropertyListenerProc, streamPacketsProc, kAudioFileMP3Type, &self.fileStreamID)
         let urlSession = URLSession(configuration: .default, delegate: self, delegateQueue: nil)
         dataTask = urlSession.dataTask(with: fileURL)
-        dataTask?.resume()
+        
     }
 
     deinit {
@@ -97,12 +96,7 @@ class AudioPlayer: NSObject {
 
 
     func play() {
-        
-        if let audioQueue = audioQueue {
-             AudioQueueStart(audioQueue, nil)
-        } else {
-            print("tt")
-        }
+        dataTask?.resume()
     }
     func pause() {
         if state != .paused {
