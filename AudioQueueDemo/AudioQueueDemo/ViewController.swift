@@ -2,7 +2,7 @@
 import UIKit
 
 class ViewController: UIViewController {
-    
+    var playing = false
     var player: AudioPlayer?
 
     override func viewDidLoad() {
@@ -13,11 +13,8 @@ class ViewController: UIViewController {
     }
 
     @IBAction func playDidTapped(_ sender: UIButton) {
-        player?.start()
-    }
-
-    @IBAction func pauseDidTapped(_ sender: UIButton) {
-        player?.pause()
+        let _ = playing ?  player?.pause() : player?.play()
+        playing = !playing
     }
 }
 
