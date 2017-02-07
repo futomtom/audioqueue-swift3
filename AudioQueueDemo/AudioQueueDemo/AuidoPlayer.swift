@@ -2,7 +2,7 @@ import Foundation
 import AudioToolbox
 
 class AudioPlayer: NSObject {
-  	
+
     var dataTask: URLSessionDataTask?
     var fileStreamID: AudioFileStreamID? = nil
     var streamDescription: AudioStreamBasicDescription?
@@ -21,6 +21,7 @@ class AudioPlayer: NSObject {
     fileprivate var streamPropertyListenerProc: AudioFileStream_PropertyListenerProc = { (clientData, audioFileStreamID, propertyID, ioFlags) -> Void in
 
         let selfPointee: AudioPlayer = unsafeBitCast(clientData, to: AudioPlayer.self)
+        //let selfPointee = Unmanaged<AudioPlayer>.fromOpaque(clientData).takeUnretainedValue()
         if propertyID == kAudioFileStreamProperty_DataFormat {
             var status: OSStatus = 0
             var dataSize: UInt32 = 0
@@ -35,27 +36,26 @@ class AudioPlayer: NSObject {
             }
         }
     }
-
-
+    
     let streamPacketsProc: AudioFileStream_PacketsProc = { (clientData, numberBytes, numberPackets, inputData, packetDescriptions) -> Void in
-
+        
         var err = noErr
         let selfPointee: AudioPlayer = unsafeBitCast(clientData, to: AudioPlayer.self)
-
+        
         var buffer: AudioQueueBufferRef? = nil
         if let audioQueue = selfPointee.audioQueue {
-            err = AudioQueueAllocateBuffer(audioQueue,numberBytes,&buffer)
+            err = AudioQueueAllocateBuffer(audioQueue, numberBytes, &buffer)
             buffer?.pointee.mAudioDataByteSize = numberBytes
-            memcpy(buffer?.pointee.mAudioData, inputData, Int(numberBytes))             //copied to buffer
-             print("2")
-            err = AudioQueueEnqueueBuffer(audioQueue,buffer!,numberPackets,packetDescriptions)
+            memcpy(buffer?.pointee.mAudioData, inputData, Int(numberBytes)) //copied to buffer
+            print("2")
+            err = AudioQueueEnqueueBuffer(audioQueue, buffer!, numberPackets, packetDescriptions)
             selfPointee.totalPacketsReceived += numberPackets
-            err = AudioQueueStart (audioQueue,nil)
+            err = AudioQueueStart (audioQueue, nil)
             selfPointee.isRunning = 1
         }
     }
 
-    fileprivate var AudioQueuePropertyCallbackProc: AudioQueuePropertyListenerProc = { (clientData, audioQueueRef , propertyID) in
+    fileprivate var AudioQueuePropertyCallbackProc: AudioQueuePropertyListenerProc = { (clientData, audioQueueRef, propertyID) in
         let selfPointee = unsafeBitCast(clientData, to: AudioPlayer.self)
         if propertyID == kAudioQueueProperty_IsRunning {
             var isRunning: UInt32 = 0
@@ -63,6 +63,21 @@ class AudioPlayer: NSObject {
             AudioQueueGetProperty(audioQueueRef, propertyID, &isRunning, &size)
 
             selfPointee.isRunning = isRunning
+        }
+    }
+    
+    fileprivate var outputCallback: AudioQueueOutputCallback = { (clientData: UnsafeMutableRawPointer?, audioQueue: AudioQueueRef, buffer: AudioQueueBufferRef) -> Void in
+        let selfPointee = Unmanaged<AudioPlayer>.fromOpaque(clientData!).takeUnretainedValue()
+        AudioQueueFreeBuffer(audioQueue, buffer)
+    }
+
+
+    var volume: Float = 3.0 {
+        didSet {
+            guard audioQueue != nil else {
+                return
+            }
+            AudioQueueSetParameter(audioQueue!, AudioQueueParameterID(kAudioQueueParam_Volume), Float32(volume))
         }
     }
 
@@ -125,30 +140,11 @@ class AudioPlayer: NSObject {
         AudioQueuePrime(self.audioQueue!, 0, nil)
         AudioQueueStart(self.audioQueue!, nil)
     }
-}
 
-let streamPropertyListenerProc: AudioFileStream_PropertyListenerProc = { (clientData, audioFileStreamID, propertyID, ioFlags) -> Void in
 
-    let player = Unmanaged<AudioPlayer>.fromOpaque(clientData).takeUnretainedValue()
-    if propertyID == kAudioFileStreamProperty_DataFormat {
-        var status: OSStatus = 0
-        var dataSize: UInt32 = 0
-        var writable: DarwinBoolean = false
-        status = AudioFileStreamGetPropertyInfo(audioFileStreamID, kAudioFileStreamProperty_DataFormat, &dataSize, &writable)
-        assert(noErr == status)
-        var audioStreamDescription: AudioStreamBasicDescription = AudioStreamBasicDescription()
-        status = AudioFileStreamGetProperty(audioFileStreamID, kAudioFileStreamProperty_DataFormat, &dataSize, &audioStreamDescription)
-        assert(noErr == status)
-        DispatchQueue.main.async {
-            player.createAudioQueue(audioStreamDescription)
-        }
-    }
-}
+  }
 
-fileprivate var outputCallback: AudioQueueOutputCallback = { (clientData: UnsafeMutableRawPointer?, audioQueue: AudioQueueRef, buffer: AudioQueueBufferRef) -> Void in
-    let selfPointee = Unmanaged<AudioPlayer>.fromOpaque(clientData!).takeUnretainedValue()
-    AudioQueueFreeBuffer(audioQueue, buffer)
-}
+
 
 extension AudioPlayer: URLSessionDataDelegate {
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
