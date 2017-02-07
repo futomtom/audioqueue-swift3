@@ -94,15 +94,13 @@ class AudioPlayer: NSObject {
         AudioFileStreamClose(fileStreamID!)
     }
 
-
     func play() {
         dataTask?.resume()
+        if let audioQueue = audioQueue {
+            AudioQueueStart(audioQueue,nil)
+        }
     }
     func pause() {
-        if state != .paused {
-            dataTask?.suspend()
-        }
-
         if let audioQueue = audioQueue {
             let status = AudioQueuePause(audioQueue)
             if status != noErr {
