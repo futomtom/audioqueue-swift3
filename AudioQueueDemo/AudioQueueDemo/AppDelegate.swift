@@ -1,10 +1,3 @@
-//
-//  AppDelegate.swift
-//  AudioQueueDemo
-//
-//  Created by zhongzhendong on 7/9/16.
-//  Copyright © 2016 zerdzhong. All rights reserved.
-//
 
 import UIKit
 

@@ -99,7 +99,7 @@
 				TargetAttributes = {
 					47B247E51D3145C9008552E4 = {
 						CreatedOnToolsVersion = 7.3;
-						DevelopmentTeam = 3Z72554ZF8;
+						DevelopmentTeam = 6A7K9VGHXX;
 						LastSwiftMigration = 0820;
 					};
 				};
@@ -259,11 +259,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = 3Z72554ZF8;
+				DEVELOPMENT_TEAM = 6A7K9VGHXX;
 				INFOPLIST_FILE = AudioQueueDemo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.zerdzhong.AudioQueueDemo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.alexfu.AudioQueueDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -274,11 +274,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = 3Z72554ZF8;
+				DEVELOPMENT_TEAM = 6A7K9VGHXX;
 				INFOPLIST_FILE = AudioQueueDemo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.zerdzhong.AudioQueueDemo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.alexfu.AudioQueueDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 1;
