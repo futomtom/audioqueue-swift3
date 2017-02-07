@@ -12,9 +12,12 @@ class ViewController: UIViewController {
     
     }
 
-    @IBAction func buttonClicked(_ sender: AnyObject) {
+    @IBAction func playDidTapped(_ sender: UIButton) {
         player?.start()
     }
 
+    @IBAction func pauseDidTapped(_ sender: UIButton) {
+        player?.pause()
+    }
 }
 
