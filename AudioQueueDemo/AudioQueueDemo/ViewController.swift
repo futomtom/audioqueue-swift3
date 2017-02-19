@@ -8,7 +8,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        player = AudioPlayer(url: URL(string: "http://hao.1015600.com/upload/ring/000/959/3d7847b54addea141736fefa91bb66b6.mp3")!)
+        player = AudioPlayer(url: URL(string: "https://drive.google.com/uc?export=download&id=0B8CZdQgUg03peWp5c0pQelNmNFU")!)
     
     }
 
